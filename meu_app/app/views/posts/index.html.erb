@@ -4,6 +4,10 @@
 
 <h1>Posts</h1>
 
+<h1 class="text-3xl font-bold underline text-blue-500">
+  Hello world!
+</h1>
+
 <div id="posts">
   <% @posts.each do |post| %>
     <%= render post %>
@@ -11,6 +15,8 @@
       <%= link_to "Show this post", post %>
     </p>
   <% end %>
+
+  <%= link_to "Comments", comments_path %>
 </div>
 
 <%= link_to "New post", new_post_path %>
