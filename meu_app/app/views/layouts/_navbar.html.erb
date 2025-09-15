@@ -1,0 +1,21 @@
+<div>
+
+    <% if admin_signed_in? %>
+        <%= current_admin.email %>
+    <% end%>
+    <ul>
+        <li>
+            <%= link_to "Home", root_path %>
+        </li>
+
+        <li>
+            <%= link_to "Post", posts_path %>
+        </li>
+
+        <li>
+            <%= link_to "Comment", comments_path %>
+        </li>
+    </ul>
+
+    <%= link_to "Deslogar", destroy_admin_session_path, method: :delete, data: { turbo_method: :delete } %>
+</div>
