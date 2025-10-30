@@ -10,10 +10,14 @@ services:
   web:
     build: .
     container_name: meu_app
+    working_dir: /meu_app
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
     volumes:
     - "./meu_app:/meu_app"
     ports:
     - "3000:3000"
+    environment:
+      DB_HOST: db
+      RAILS_ENV: development
     depends_on:
     - db
