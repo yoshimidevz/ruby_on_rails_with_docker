@@ -1,21 +1,40 @@
-<div>
-
-    <% if admin_signed_in? %>
-        <%= current_admin.email %>
-    <% end%>
-    <ul>
-        <li>
-            <%= link_to "Home", root_path %>
-        </li>
-
-        <li>
-            <%= link_to "Post", posts_path %>
-        </li>
-
-        <li>
-            <%= link_to "Comment", comments_path %>
-        </li>
-    </ul>
-
-    <%= link_to "Deslogar", destroy_admin_session_path, method: :delete, data: { turbo_method: :delete } %>
-</div>
+<nav class="bg-blue-600 text-white shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <h1 class="text-xl font-bold">Sistema de Quiz</h1>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <%= link_to "Quizzes", quizzes_path, class: "hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium" %>
+            <% if current_admin&.can_manage_quizzes? %>
+              <%= link_to "Novo Quiz", new_quiz_path, class: "hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium" %>
+            <% end %>
+            <%= link_to "Posts", posts_path, class: "hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Comentários", comments_path, class: "hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <% if admin_signed_in? %>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm">
+              <%= current_admin.name || current_admin.email %>
+            </span>
+            <span class="bg-blue-500 px-2 py-1 rounded-full text-xs">
+              <%= current_admin.role.humanize %>
+            </span>
+          </div>
+          <%= link_to "Sair", destroy_admin_session_path, method: :delete, 
+                      data: { turbo_method: :delete }, 
+                      class: "bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium" %>
+        <% else %>
+          <%= link_to "Entrar", new_admin_session_path, 
+                      class: "bg-green-600 hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

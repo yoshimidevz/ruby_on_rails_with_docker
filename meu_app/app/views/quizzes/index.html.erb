@@ -1,0 +1,96 @@
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="px-4 py-6 sm:px-0">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Quizzes</h1>
+      <% if current_admin&.can_manage_quizzes? %>
+        <%= link_to "Novo Quiz", new_quiz_path, 
+                    class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+      <% end %>
+    </div>
+
+    <% if @quizzes.any? %>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <% @quizzes.each do |quiz| %>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">
+                <%= quiz.title %>
+              </h3>
+              <p class="text-gray-600 text-sm mb-4">
+                <%= truncate(quiz.description, length: 100) %>
+              </p>
+              
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  <%= case quiz.status
+                      when 'draft' then 'bg-gray-100 text-gray-800'
+                      when 'published' then 'bg-green-100 text-green-800'
+                      when 'closed' then 'bg-red-100 text-red-800'
+                      end %>">
+                  <%= quiz.status.humanize %>
+                </span>
+                <span class="text-sm text-gray-500">
+                  <%= quiz.total_questions %> perguntas
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <span>Criado por: <%= quiz.admin.name || quiz.admin.email %></span>
+                <span><%= quiz.total_points %> pontos</span>
+              </div>
+
+              <div class="flex space-x-2">
+                <%= link_to "Ver", quiz_path(quiz), 
+                            class: "bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium py-2 px-3 rounded" %>
+                
+                <% if quiz.can_be_taken_by?(current_admin) %>
+                  <%= link_to "Fazer Quiz", take_quiz_quiz_path(quiz), 
+                              class: "bg-green-100 hover:bg-green-200 text-green-800 text-sm font-medium py-2 px-3 rounded" %>
+                <% end %>
+                
+                <% if quiz.user_has_answered?(current_admin) %>
+                  <%= link_to "Ver Resultado", results_quiz_path(quiz), 
+                              class: "bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm font-medium py-2 px-3 rounded" %>
+                <% end %>
+                
+                <% if policy(quiz).update? %>
+                  <%= link_to "Editar", edit_quiz_path(quiz), 
+                              class: "bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-sm font-medium py-2 px-3 rounded" %>
+                <% end %>
+                
+                <% if policy(quiz).publish? && quiz.draft? %>
+                  <%= link_to "Publicar", publish_quiz_path(quiz), 
+                              method: :patch,
+                              data: { turbo_method: :patch },
+                              class: "bg-green-100 hover:bg-green-200 text-green-800 text-sm font-medium py-2 px-3 rounded" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <div class="mx-auto h-12 w-12 text-gray-400">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum quiz encontrado</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          <% if current_admin&.can_manage_quizzes? %>
+            Comece criando um novo quiz.
+          <% else %>
+            Aguarde novos quizzes serem publicados.
+          <% end %>
+        </p>
+        <% if current_admin&.can_manage_quizzes? %>
+          <div class="mt-6">
+            <%= link_to "Novo Quiz", new_quiz_path, 
+                        class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
